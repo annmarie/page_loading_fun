@@ -2,6 +2,7 @@
 (function(win, doc, callback) {
   var _fetch = win.fetch,
   open = win.XMLHttpRequest.prototype.open,
+  send = win.XMLHttpRequest.prototype.send,
   inProgressFetchCnt = 0,
   inProgressXhrCnt = 0,
   foundTerms = [];
@@ -20,8 +21,8 @@
       setTimeout(checkPageLoadingStatus, 100);
     }
   }
-  // wait half a sec before starting
-  setTimeout(checkPageLoadingStatus, 500);
+  // wait a sec before starting
+  setTimeout(checkPageLoadingStatus, 1000);
 
 
   function listenToFetch() {
@@ -56,6 +57,11 @@
       }, false)
 
       open.call(this, method, url, async, user, pass)
+    }
+
+    // more stuff to listen too
+    XMLHttpRequest.prototype.send = function(data) {
+      send.call(this, data);
     }
   }
 
@@ -92,36 +98,3 @@
 })(window, document, function(){
   console.log("--- i am the didPageFinishLoading callback ---");
 })
-
-/*
-
-Thoughts on how API changes could relate to DOM changes
-
-api out
-no dom changes
-api in
-dom add
-
-api out
-dom add
-api in
-dom remove
-
-dom add
-api out
-api in
-dom add
-dom remove
-
-
-dom add
-api out/in
-api out/in
-dom remove
-
-api out
-dom add/remove
-dom add/remove
-api in
-
-*/
